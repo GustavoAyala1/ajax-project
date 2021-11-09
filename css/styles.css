@@ -14,7 +14,9 @@ header {
 .halfCol {
   flex-basis: 50%;
 }
-
+.fullCol {
+  flex-basis: 100%;
+}
 /*                    NAVBAR                                               */
 
 .collectionsRow {
@@ -46,10 +48,21 @@ header {
 }
 
 /*                       MAINCONTAINER                                      */
+.sortCont {
+  align-self: center;
+  display: flex;
+  justify-content: flex-end;
+}
 .sort {
   background-color: rgb(52, 58, 64);
   color: rgb(23, 162, 184);
   padding: 5px 5px;
   border-color: rgb(23, 162, 184);
-  margin: 20px 0 20px 5px;
+  margin: 20px 5px 20px;
 }
+.searchResults {
+  color: white;
+  margin-left: 5px;
+}
+
+/*                       MEDIAQUERIES                                      */

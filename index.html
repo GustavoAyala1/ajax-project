@@ -28,12 +28,18 @@
     <main>
       <div class="mainContainer">
         <div class="row">
-          <select name="sort" id="sort" class="sort">
-            <option value="sort">Sort</option>
-            <option value="ascending">Ascending</option>
-            <option value="descending">Descending</option>
-          </select>
+          <div class="halfCol">
+            <h3 class="searchResults">Search Results</h3>
+          </div>
+          <div class="halfCol sortCont fullCol">
+            <select name="sort" id="sort" class="sort">
+              <option value="sort">Sort</option>
+              <option value="ascending">Ascending</option>
+              <option value="descending">Descending</option>
+            </select>
+          </div>
         </div>
+        <div class="row"></div>
       </div>
     </main>
     <script src="js/data.js"></script>
