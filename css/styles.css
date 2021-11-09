@@ -8,14 +8,24 @@ header {
   width: 100%;
 }
 .row {
-  width: 100%;
   display: flex;
+  flex-wrap: wrap;
+}
+.lowrow {
+  display: flex;
+  flex-wrap: nowrap;
 }
 .halfCol {
   flex-basis: 50%;
 }
 .fullCol {
   flex-basis: 100%;
+}
+img {
+  width: 100%;
+}
+.hidden {
+  display: none;
 }
 /*                    NAVBAR                                               */
 
@@ -54,7 +64,7 @@ header {
   justify-content: flex-end;
 }
 .sort {
-  background-color: rgb(52, 58, 64);
+  background-color: rgb(41, 41, 41);
   color: rgb(23, 162, 184);
   padding: 5px 5px;
   border-color: rgb(23, 162, 184);
@@ -64,5 +74,69 @@ header {
   color: white;
   margin-left: 5px;
 }
+.resultsCont {
+  margin: 10px 0px;
+  padding: 0 10px;
+}
+.infoSect {
+  text-align: center;
+}
+.infoSect h2 {
+  font-size: 1.7rem;
+  color: white;
+}
+.infoSect p {
+  font-size: 1.2rem;
+  color: white;
+}
+.infoSect button {
+  background-color: rgb(41, 41, 41);
+  color: rgb(23, 162, 184);
+  padding: 5px 10px;
+  border-color: rgb(23, 162, 184);
+  margin-right: 5px;
+}
+
+.comments {
+  background-color: rgb(41, 41, 41);
+  color: white;
+  border-color: rgb(23, 162, 184);
+  margin-left: 5px;
+}
+.commentForm textarea {
+  height: 50px;
+  margin-bottom: 15px;
+}
+.deleteComment {
+  text-decoration: none;
+  color: rgba(255, 0, 0, 0.719);
+}
+.addComment {
+  text-decoration: none;
+  color: lime;
+}
 
 /*                       MEDIAQUERIES                                      */
+@media (min-width: 850px) {
+  .thirdCol {
+    flex-basis: calc(100% / 3);
+  }
+  .resultsCol {
+    flex-basis: 100%;
+  }
+  .infoSect h2 {
+    margin-top: -2px;
+  }
+  .infoSect p {
+    margin-top: -15px;
+  }
+  .lowrow {
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 1200px) {
+  .fifthCol {
+    flex-basis: 20%;
+  }
+}
