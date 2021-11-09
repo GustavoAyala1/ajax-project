@@ -1,0 +1,55 @@
+body {
+  background-color: rgb(41, 41, 41);
+  width: 100vw;
+}
+
+header {
+  background-color: rgb(52, 58, 64);
+  width: 100%;
+}
+.row {
+  width: 100%;
+  display: flex;
+}
+.halfCol {
+  flex-basis: 50%;
+}
+
+/*                    NAVBAR                                               */
+
+.collectionsRow {
+  width: 100%;
+}
+
+.searchCont {
+  align-self: center;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.searchBtn {
+  background-color: rgb(52, 58, 64);
+  color: rgb(23, 162, 184);
+  padding: 5px 10px;
+  border-color: rgb(23, 162, 184);
+  margin-right: 5px;
+}
+
+.searchInput {
+  padding: 5px 20px;
+}
+
+.collections {
+  margin-left: 5px;
+  color: white;
+  text-decoration: none;
+}
+
+/*                       MAINCONTAINER                                      */
+.sort {
+  background-color: rgb(52, 58, 64);
+  color: rgb(23, 162, 184);
+  padding: 5px 5px;
+  border-color: rgb(23, 162, 184);
+  margin: 20px 0 20px 5px;
+}
