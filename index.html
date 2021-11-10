@@ -1,20 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AJAX Project</title>
-  <link rel="icon" href="images/favicon.ico">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header>
-  </header>
-  <main>
-  </main>
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AJAX Project</title>
+    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="collectionsRow row">
+          <div class="halfCol">
+            <h1><a href="#" class="collections">Collections</a></h1>
+          </div>
+          <div class="halfCol searchCont">
+            <form action="#" id="searchForm" class="searchForm">
+              <input
+                type="text"
+                placeholder="Search..."
+                class="searchInput"
+                name="searchInput"
+              />
+              <button class="searchBtn">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="mainContainer">
+        <div class="row">
+          <div class="halfCol hidden">
+            <h3 class="searchResults">Search Results</h3>
+          </div>
+          <div class="halfCol sortCont fullCol">
+            <select name="sort" id="sort" class="sort">
+              <option value="sort">Sort</option>
+              <option value="ascending">Ascending</option>
+              <option value="descending">Descending</option>
+            </select>
+          </div>
+        </div>
+        <div class="row foundCont">
+          <!-- <div class="lowrow fullCol thirdCol fifthCol resultsCont">
+            <div class="halfCol resultsCol">
+              <img
+                src="https://m.media-amazon.com/images/M/MV5BNzhlY2E5NDUtYjJjYy00ODg3LWFkZWQtYTVmMzU4ZWZmOWJkXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_FMjpg_UX1000_.jpg"
+                alt="lost tv show poster"
+              />
+            </div>
+            <div class="halfCol infoSect resultsCol">
+              <h2>LOST</h2>
+              <p>2010</p>
+              <button class="saveBtn">Save</button>
+              <form action="#" class="commentForm hidden">
+                <textarea
+                  name="comments"
+                  class="comments"
+                  cols="30"
+                  rows="10"
+                  placeholder="Add comments"
+                ></textarea>
+                <div class="row">
+                  <div class="halfCol">
+                    <button class="deleteComment">Delete Comment</button>
+                  </div>
+                  <div class="halfCol">
+                    <button class="addComment">Add Comment</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </main>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>
