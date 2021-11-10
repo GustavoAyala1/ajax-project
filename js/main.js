@@ -1,10 +1,13 @@
 const $searchForm = document.querySelector("#searchForm");
 const $foundCont = document.querySelector(".foundCont");
+const $saveBtn = document.querySelector(".saveBtn");
+const $commentForm = document.querySelectorAll(".commentForm");
 
 /*                       HANDLE SEARCH                                      */
 const handleSearch = (event) => {
   event.preventDefault();
   const inputValue = $searchForm.searchInput.value;
+  // $foundCont.remove();
   searchAPI(inputValue);
   $searchForm.reset();
 };
@@ -22,6 +25,8 @@ const searchAPI = (search) => {
     console.log(xhr.status);
     console.log(response);
     for (let i = 0; i < response.results.length; i++) {
+      const dataView = data.nextEntryId++;
+
       const mainDiv = document.createElement("div");
       const imgDiv = document.createElement("div");
       const img = document.createElement("img");
@@ -40,6 +45,7 @@ const searchAPI = (search) => {
       const saveAnchor = document.createElement("a");
 
       mainDiv.className = "lowrow fullCol thirdCol fifthCol resultsCont";
+      mainDiv.setAttribute("data-view", dataView);
       imgDiv.className = "halfCol resultsCol";
       infoDiv.className = "halfCol infoSect resultsCol";
       img.setAttribute("src", response.results[i].image);
@@ -53,6 +59,7 @@ const searchAPI = (search) => {
       deleteAnchor.setAttribute("class", "deleteComment");
       saveColDiv.setAttribute("class", "halfCol");
       saveAnchor.setAttribute("class", "addComment");
+      saveBtn.setAttribute("data-view", dataView);
 
       title.textContent = response.results[i].title;
       paragraph.textContent = response.results[i].description;
@@ -74,7 +81,7 @@ const searchAPI = (search) => {
       commentForm.appendChild(extraDiv);
       savePara.appendChild(saveAnchor);
       saveColDiv.appendChild(savePara);
-      commentForm.appendChild(saveColDiv);
+      extraDiv.appendChild(saveColDiv);
 
       $foundCont.appendChild(mainDiv);
     }
@@ -82,4 +89,16 @@ const searchAPI = (search) => {
   xhr.send();
 };
 
+/*                       SAVING COMMENTS                                      */
+
+const saveClick = (event) => {
+  const target = event.target;
+  if (target.getAttribute("class") === "saveBtn") {
+    target.classList.add("hidden");
+    target.nextElementSibling.classList.remove("hidden");
+  }
+};
+
+/*                       EVENT LISTENERS                                       */
+window.addEventListener("click", saveClick);
 $searchForm.addEventListener("submit", handleSearch);
