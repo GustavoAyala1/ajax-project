@@ -89,7 +89,7 @@ img {
   font-size: 1.2rem;
   color: white;
 }
-.infoSect button {
+.saveBtn {
   background-color: rgb(41, 41, 41);
   color: rgb(23, 162, 184);
   padding: 5px 10px;
@@ -108,12 +108,14 @@ img {
   margin-bottom: 15px;
 }
 .deleteComment {
-  text-decoration: none;
+  border: none;
   color: rgba(255, 0, 0, 0.719);
+  background-color: rgb(41, 41, 41);
 }
 .addComment {
-  text-decoration: none;
+  border: none;
   color: lime;
+  background-color: rgb(41, 41, 41);
 }
 
 /*                       MEDIAQUERIES                                      */

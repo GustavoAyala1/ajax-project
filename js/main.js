@@ -1,7 +1,7 @@
 const $searchForm = document.querySelector("#searchForm");
 const $foundCont = document.querySelector(".foundCont");
 const $saveBtn = document.querySelector(".saveBtn");
-const $commentForm = document.querySelectorAll(".commentForm");
+const $commentForm = document.querySelector(".commentForm");
 
 /*                       HANDLE SEARCH                                      */
 const handleSearch = (event) => {
@@ -13,11 +13,14 @@ const handleSearch = (event) => {
 };
 
 /*                       SEARCH REQUEST ON API                                      */
+
+//keys1=k_mfnhal5g
+//keys2=k_760ufq2x
 const xhr = new XMLHttpRequest();
 const searchAPI = (search) => {
   xhr.open(
     "GET",
-    `https://imdb-api.com/en/API/SearchTitle/k_mfnhal5g/${search}`
+    `https://imdb-api.com/en/API/SearchTitle/k_760ufq2x/${search}`
   );
   xhr.responseType = "json";
   xhr.addEventListener("load", () => {
@@ -38,11 +41,9 @@ const searchAPI = (search) => {
       const textarea = document.createElement("textarea");
       const extraDiv = document.createElement("div");
       const extraOne = document.createElement("div");
-      const deletePara = document.createElement("p");
-      const deleteAnchor = document.createElement("a");
+      const deleteAnchor = document.createElement("button");
       const saveColDiv = document.createElement("div");
-      const savePara = document.createElement("p");
-      const saveAnchor = document.createElement("a");
+      const saveAnchor = document.createElement("button");
 
       mainDiv.className = "lowrow fullCol thirdCol fifthCol resultsCont";
       mainDiv.setAttribute("data-view", dataView);
@@ -53,6 +54,7 @@ const searchAPI = (search) => {
       commentForm.className = "commentForm hidden";
       textarea.setAttribute("name", "comments");
       textarea.setAttribute("class", "comments");
+      textarea.setAttribute("id", "comments");
       textarea.setAttribute("placeholder", "Add comments");
       extraDiv.setAttribute("class", "row");
       extraOne.setAttribute("class", "halfCol");
@@ -75,12 +77,10 @@ const searchAPI = (search) => {
       infoDiv.appendChild(saveBtn);
       infoDiv.appendChild(commentForm);
       commentForm.appendChild(textarea);
-      deletePara.appendChild(deleteAnchor);
-      extraOne.appendChild(deletePara);
+      extraOne.appendChild(deleteAnchor);
       extraDiv.appendChild(extraOne);
       commentForm.appendChild(extraDiv);
-      savePara.appendChild(saveAnchor);
-      saveColDiv.appendChild(savePara);
+      saveColDiv.appendChild(saveAnchor);
       extraDiv.appendChild(saveColDiv);
 
       $foundCont.appendChild(mainDiv);
@@ -98,7 +98,33 @@ const saveClick = (event) => {
     target.nextElementSibling.classList.remove("hidden");
   }
 };
+const addComment = (event) => {
+  event.preventDefault();
+  const target = event.target;
+  let submitter = event.submitter;
+  const getForm = target.getAttribute("class");
+  const value = target.comments.value;
+  if (getForm === "commentForm") {
+    let formParent = submitter.parentElement.parentElement.parentElement;
+    let textareaNear = formParent.children[0];
+    let textareaAfter = formParent.children[1];
+    const commentReplaced = document.createElement("p");
+    if (submitter.getAttribute("class") === "addComment") {
+      commentReplaced.setAttribute("class", "commentReplaced");
+      commentReplaced.innerText = `"${value}"`;
+      formParent.prepend(commentReplaced);
+      textareaNear.classList.add("hidden");
+    } else if (submitter.getAttribute("class") === "deleteComment") {
+      formParent.classList.add("hidden");
+      formParent.reset();
+      formParent.parentElement.children[2].classList.remove("hidden");
+      textareaNear.remove();
+      textareaAfter.classList.remove("hidden");
+    }
+  }
+};
 
 /*                       EVENT LISTENERS                                       */
 window.addEventListener("click", saveClick);
 $searchForm.addEventListener("submit", handleSearch);
+window.addEventListener("submit", addComment);

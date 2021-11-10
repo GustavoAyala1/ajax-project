@@ -39,18 +39,14 @@ var data = {
       ></textarea>
       <div class="row">
         <div class="halfCol">
-          <p>
-            <a href="#" class="deleteComment">
+                <button class="deleteComment">
               Delete Comment
-            </a>
-          </p>
-        </div>
+            </button>
+                  </div>
         <div class="halfCol">
-          <p>
-            <a href="#" class="addComment">
+            <button class="addComment">
               Add Comment
-            </a>
-          </p>
+            </button>
         </div>
       </div>
     </form>
