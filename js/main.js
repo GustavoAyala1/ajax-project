@@ -4,6 +4,7 @@ const $saveBtn = document.querySelector(".saveBtn");
 const $commentForm = document.querySelector(".commentForm");
 const $collectionsCont = document.querySelector(".collectionsCont");
 const $homePage = document.querySelector(".collections");
+const $sort = document.querySelector(".sort");
 
 /*                       HANDLE SEARCH                                      */
 const handleSearch = (event) => {
@@ -30,6 +31,7 @@ const searchAPI = (search) => {
     const response = xhr.response;
     console.log(xhr.status);
     console.log(response);
+    removeAllChildNodes($foundCont);
     for (let i = 0; i < response.results.length; i++)
       createFoundElement(response.results[i], $foundCont);
   });
@@ -103,6 +105,7 @@ const saveClick = (event) => {
     target.nextElementSibling.classList.remove("hidden");
   }
 };
+
 const addComment = (event) => {
   event.preventDefault();
   const target = event.target;
@@ -131,6 +134,11 @@ const addComment = (event) => {
         image: imgLink,
         comment: commentReplaced.innerText,
       };
+      if (entryObj.description.slice(0, 3) === "(I)") {
+        entryObj.year = +entryObj.description.slice(5, 9);
+      } else {
+        entryObj.year = +entryObj.description.slice(1, 5);
+      }
       data.results.push(entryObj);
     } else if (submitter.getAttribute("class") === "deleteComment") {
       formParent.classList.add("hidden");
@@ -157,6 +165,7 @@ if (data.results.length > 0) {
   for (let i = 0; i < data.results.length; i++) {
     createFoundElement(data.results[i], $collectionsCont);
   }
+  console.log(data);
 }
 
 function removeAllChildNodes(parent) {
@@ -164,8 +173,38 @@ function removeAllChildNodes(parent) {
     parent.removeChild(parent.firstChild);
   }
 }
+/*                       SORTING                                                */
+const handleSort = (event, location) => {
+  const value = event.target.value;
+  let container;
+  if (!location) {
+    location = data.results;
+  }
+  removeAllChildNodes($collectionsCont);
+  for (let i = 0; i < location.length; i++) {
+    if (value === "newest") {
+      const sorted = location.sort((newer, older) => {
+        return older.year - newer.year;
+      });
+      createFoundElement(sorted[i], $collectionsCont);
+      createFoundElement(sorted[i], $foundCont);
+    }
+    if (value === "oldest") {
+      const sorted = location.sort((newer, older) => {
+        return newer.year - older.year;
+      });
+      createFoundElement(sorted[i], $collectionsCont);
+      createFoundElement(sorted[i], $foundCont);
+    }
+    if (value === "sort") {
+      createFoundElement(location[i], $collectionsCont);
+      createFoundElement(location[i], $foundCont);
+    }
+  }
+};
 /*                       EVENT LISTENERS                                       */
 window.addEventListener("click", saveClick);
 $homePage.addEventListener("click", saveCollections);
 $searchForm.addEventListener("submit", handleSearch);
 window.addEventListener("submit", addComment);
+$sort.addEventListener("input", handleSort);

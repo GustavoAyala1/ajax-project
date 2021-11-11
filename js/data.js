@@ -1,7 +1,9 @@
 /* exported data */
+
 var data = {
   view: "entry-form",
   results: [],
+  searchResults:[]
   editing: null,
   nextEntryId: 1,
 };
@@ -17,7 +19,7 @@ const handleUnload = (event) => {
 };
 window.addEventListener("beforeunload", handleUnload);
 
-{
+
   /* <div class="lowrow fullCol thirdCol fifthCol resultsCont">
   <div class="halfCol resultsCol">
     <img
@@ -52,7 +54,7 @@ window.addEventListener("beforeunload", handleUnload);
     </form>
   </div>
 </div>; */
-}
+
 
 //  const li = document.createElement("li");
 //  const img = document.createElement("img");
