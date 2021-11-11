@@ -9,6 +9,8 @@ const $homePage = document.querySelector(".collections");
 const handleSearch = (event) => {
   event.preventDefault();
   const inputValue = $searchForm.searchInput.value;
+  $foundCont.classList.remove("hidden");
+  $collectionsCont.classList.add("hidden");
   searchAPI(inputValue);
   $searchForm.reset();
 };
