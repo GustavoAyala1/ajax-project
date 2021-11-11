@@ -1,7 +1,7 @@
 /* exported data */
 var data = {
   view: "entry-form",
-  entries: [],
+  results: [],
   editing: null,
   nextEntryId: 1,
 };
