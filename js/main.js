@@ -4,6 +4,7 @@ const $saveBtn = document.querySelector(".saveBtn");
 const $commentForm = document.querySelector(".commentForm");
 const $collectionsCont = document.querySelector(".collectionsCont");
 const $homePage = document.querySelector(".collections");
+const $sort = document.querySelector(".sort");
 
 /*                       HANDLE SEARCH                                      */
 const handleSearch = (event) => {
@@ -16,6 +17,7 @@ const handleSearch = (event) => {
 };
 
 /*                       SEARCH REQUEST ON API                                      */
+const searchResults = [];
 
 //keys1=k_mfnhal5g
 //keys2=k_760ufq2x
@@ -23,18 +25,34 @@ const xhr = new XMLHttpRequest();
 const searchAPI = (search) => {
   xhr.open(
     "GET",
-    `https://imdb-api.com/en/API/SearchTitle/k_760ufq2x/${search}`
+    `https://imdb-api.com/en/API/SearchTitle/k_mfnhal5g/${search}`
   );
   xhr.responseType = "json";
   xhr.addEventListener("load", () => {
     const response = xhr.response;
     console.log(xhr.status);
     console.log(response);
-    for (let i = 0; i < response.results.length; i++)
+    removeAllChildNodes($foundCont);
+    for (let i = 0; i < response.results.length; i++) {
       createFoundElement(response.results[i], $foundCont);
+      const resultsObj = {
+        title: response.results[i].title,
+        description: response.results[i].description,
+        image: response.results[i].image,
+      };
+
+      if (resultsObj.description.slice(0, 3) === "(I)") {
+        resultsObj.year = +resultsObj.description.slice(5, 9);
+      } else {
+        resultsObj.year = +resultsObj.description.slice(1, 5);
+      }
+      console.log(searchResults);
+      searchResults.unshift(resultsObj);
+    }
   });
   xhr.send();
 };
+
 const createFoundElement = (results, container) => {
   const dataView = data.nextEntryId++;
 
@@ -103,6 +121,7 @@ const saveClick = (event) => {
     target.nextElementSibling.classList.remove("hidden");
   }
 };
+
 const addComment = (event) => {
   event.preventDefault();
   const target = event.target;
@@ -131,6 +150,11 @@ const addComment = (event) => {
         image: imgLink,
         comment: commentReplaced.innerText,
       };
+      if (entryObj.description.slice(0, 3) === "(I)") {
+        entryObj.year = +entryObj.description.slice(5, 9);
+      } else {
+        entryObj.year = +entryObj.description.slice(1, 5);
+      }
       data.results.push(entryObj);
     } else if (submitter.getAttribute("class") === "deleteComment") {
       formParent.classList.add("hidden");
@@ -164,8 +188,44 @@ function removeAllChildNodes(parent) {
     parent.removeChild(parent.firstChild);
   }
 }
+/*                       SORTING                                                */
+const handleSort = (event, location) => {
+  const value = event.target.value;
+  let container;
+  let otherContainer;
+  if (searchResults.length === 0) {
+    location = data.results;
+    container = $collectionsCont;
+    otherContainer = $foundCont;
+  } else {
+    location = searchResults;
+    otherContainer = $collectionsCont;
+    container = $foundCont;
+  }
+
+  removeAllChildNodes(container);
+
+  for (let i = 0; i < location.length; i++) {
+    if (value === "newest") {
+      const sorted = location.sort((newer, older) => {
+        return older.year - newer.year;
+      });
+      createFoundElement(sorted[i], container);
+    }
+    if (value === "oldest") {
+      const sorted = location.sort((newer, older) => {
+        return newer.year - older.year;
+      });
+      createFoundElement(sorted[i], container);
+    }
+    if (value === "sort") {
+      createFoundElement(location[i], container);
+    }
+  }
+};
 /*                       EVENT LISTENERS                                       */
 window.addEventListener("click", saveClick);
 $homePage.addEventListener("click", saveCollections);
 $searchForm.addEventListener("submit", handleSearch);
 window.addEventListener("submit", addComment);
+$sort.addEventListener("input", handleSort);
