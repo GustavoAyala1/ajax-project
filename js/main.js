@@ -17,7 +17,7 @@ const handleSearch = (event) => {
 };
 
 /*                       SEARCH REQUEST ON API                                      */
-const searchResults = [];
+let searchResults = [];
 
 //keys1=k_mfnhal5g
 //keys2=k_760ufq2x
@@ -170,6 +170,7 @@ const saveCollections = (event) => {
   removeAllChildNodes($collectionsCont);
   $foundCont.classList.add("hidden");
   $collectionsCont.classList.remove("hidden");
+  searchResults = [];
   for (let i = 0; i < data.results.length; i++) {
     createFoundElement(data.results[i], $collectionsCont);
   }
