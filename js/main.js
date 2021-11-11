@@ -17,6 +17,7 @@ const handleSearch = (event) => {
 };
 
 /*                       SEARCH REQUEST ON API                                      */
+const searchResults = [];
 
 //keys1=k_mfnhal5g
 //keys2=k_760ufq2x
@@ -24,7 +25,7 @@ const xhr = new XMLHttpRequest();
 const searchAPI = (search) => {
   xhr.open(
     "GET",
-    `https://imdb-api.com/en/API/SearchTitle/k_760ufq2x/${search}`
+    `https://imdb-api.com/en/API/SearchTitle/k_mfnhal5g/${search}`
   );
   xhr.responseType = "json";
   xhr.addEventListener("load", () => {
@@ -32,11 +33,26 @@ const searchAPI = (search) => {
     console.log(xhr.status);
     console.log(response);
     removeAllChildNodes($foundCont);
-    for (let i = 0; i < response.results.length; i++)
+    for (let i = 0; i < response.results.length; i++) {
       createFoundElement(response.results[i], $foundCont);
+      const resultsObj = {
+        title: response.results[i].title,
+        description: response.results[i].description,
+        image: response.results[i].image,
+      };
+
+      if (resultsObj.description.slice(0, 3) === "(I)") {
+        resultsObj.year = +resultsObj.description.slice(5, 9);
+      } else {
+        resultsObj.year = +resultsObj.description.slice(1, 5);
+      }
+      console.log(searchResults);
+      searchResults.unshift(resultsObj);
+    }
   });
   xhr.send();
 };
+
 const createFoundElement = (results, container) => {
   const dataView = data.nextEntryId++;
 
@@ -165,7 +181,6 @@ if (data.results.length > 0) {
   for (let i = 0; i < data.results.length; i++) {
     createFoundElement(data.results[i], $collectionsCont);
   }
-  console.log(data);
 }
 
 function removeAllChildNodes(parent) {
@@ -177,28 +192,34 @@ function removeAllChildNodes(parent) {
 const handleSort = (event, location) => {
   const value = event.target.value;
   let container;
-  if (!location) {
+  let otherContainer;
+  if (searchResults.length === 0) {
     location = data.results;
+    container = $collectionsCont;
+    otherContainer = $foundCont;
+  } else {
+    location = searchResults;
+    otherContainer = $collectionsCont;
+    container = $foundCont;
   }
-  removeAllChildNodes($collectionsCont);
+
+  removeAllChildNodes(container);
+
   for (let i = 0; i < location.length; i++) {
     if (value === "newest") {
       const sorted = location.sort((newer, older) => {
         return older.year - newer.year;
       });
-      createFoundElement(sorted[i], $collectionsCont);
-      createFoundElement(sorted[i], $foundCont);
+      createFoundElement(sorted[i], container);
     }
     if (value === "oldest") {
       const sorted = location.sort((newer, older) => {
         return newer.year - older.year;
       });
-      createFoundElement(sorted[i], $collectionsCont);
-      createFoundElement(sorted[i], $foundCont);
+      createFoundElement(sorted[i], container);
     }
     if (value === "sort") {
-      createFoundElement(location[i], $collectionsCont);
-      createFoundElement(location[i], $foundCont);
+      createFoundElement(location[i], container);
     }
   }
 };

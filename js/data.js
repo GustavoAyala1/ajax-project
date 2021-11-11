@@ -3,7 +3,6 @@
 var data = {
   view: "entry-form",
   results: [],
-  searchResults:[]
   editing: null,
   nextEntryId: 1,
 };
@@ -19,8 +18,7 @@ const handleUnload = (event) => {
 };
 window.addEventListener("beforeunload", handleUnload);
 
-
-  /* <div class="lowrow fullCol thirdCol fifthCol resultsCont">
+/* <div class="lowrow fullCol thirdCol fifthCol resultsCont">
   <div class="halfCol resultsCol">
     <img
       src="https://m.media-amazon.com/images/M/MV5BNzhlY2E5NDUtYjJjYy00ODg3LWFkZWQtYTVmMzU4ZWZmOWJkXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_FMjpg_UX1000_.jpg"
@@ -54,7 +52,6 @@ window.addEventListener("beforeunload", handleUnload);
     </form>
   </div>
 </div>; */
-
 
 //  const li = document.createElement("li");
 //  const img = document.createElement("img");
