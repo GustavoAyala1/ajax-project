@@ -132,7 +132,6 @@ const addComment = (event) => {
         comment: commentReplaced.innerText,
       };
       data.results.push(entryObj);
-      console.log(data);
     } else if (submitter.getAttribute("class") === "deleteComment") {
       formParent.classList.add("hidden");
       formParent.reset();
@@ -144,15 +143,27 @@ const addComment = (event) => {
 };
 /*                       SAVING TO COLLECTIONS                                      */
 const saveCollections = (event) => {
-  const target = event.target;
+  removeAllChildNodes($collectionsCont);
   $foundCont.classList.add("hidden");
   $collectionsCont.classList.remove("hidden");
   for (let i = 0; i < data.results.length; i++) {
     createFoundElement(data.results[i], $collectionsCont);
-    console.log(data);
   }
 };
+if (data.results.length > 0) {
+  removeAllChildNodes($collectionsCont);
+  $foundCont.classList.add("hidden");
+  $collectionsCont.classList.remove("hidden");
+  for (let i = 0; i < data.results.length; i++) {
+    createFoundElement(data.results[i], $collectionsCont);
+  }
+}
 
+function removeAllChildNodes(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+}
 /*                       EVENT LISTENERS                                       */
 window.addEventListener("click", saveClick);
 $homePage.addEventListener("click", saveCollections);
