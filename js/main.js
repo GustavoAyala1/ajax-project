@@ -12,7 +12,7 @@ const handleSearch = (event) => {
   const inputValue = $searchForm.searchInput.value;
   $foundCont.classList.remove("hidden");
   $collectionsCont.classList.add("hidden");
-  searchAPI(inputValue);
+  searchAPI(inputValue, $foundCont);
   $searchForm.reset();
 };
 
@@ -27,6 +27,7 @@ const searchAPI = (search) => {
     "GET",
     `https://imdb-api.com/en/API/SearchTitle/k_mfnhal5g/${search}`
   );
+
   xhr.responseType = "json";
   xhr.addEventListener("load", () => {
     const response = xhr.response;
@@ -46,8 +47,24 @@ const searchAPI = (search) => {
       } else {
         resultsObj.year = +resultsObj.description.slice(1, 5);
       }
-      console.log(searchResults);
+
       searchResults.unshift(resultsObj);
+    }
+  });
+  xhr.send();
+};
+
+const comingSoon = (search) => {
+  xhr.open("GET", `https://imdb-api.com/en/API/MostPopularMovies/k_mfnhal5g`);
+
+  xhr.responseType = "json";
+  xhr.addEventListener("load", () => {
+    const response = xhr.response;
+    console.log(xhr.status);
+    console.log(response);
+    removeAllChildNodes($foundCont);
+    for (let i = 0; i < 20; i++) {
+      createFoundElement(response.items[i], $collectionsCont);
     }
   });
   xhr.send();
@@ -166,7 +183,12 @@ const addComment = (event) => {
   }
 };
 /*                       SAVING TO COLLECTIONS                                      */
+
 const saveCollections = (event) => {
+  if (data.results.length === 0) {
+    removeAllChildNodes($collectionsCont);
+    comingSoon();
+  }
   removeAllChildNodes($collectionsCont);
   $foundCont.classList.add("hidden");
   $collectionsCont.classList.remove("hidden");
@@ -180,6 +202,12 @@ if (data.results.length > 0) {
   $collectionsCont.classList.remove("hidden");
   for (let i = 0; i < data.results.length; i++) {
     createFoundElement(data.results[i], $collectionsCont);
+  }
+} else {
+  $foundCont.classList.add("hidden");
+  $collectionsCont.classList.remove("hidden");
+  for (let i = 0; i < data.results.length; i++) {
+    comingSoon("random");
   }
 }
 
@@ -224,6 +252,9 @@ const handleSort = (event, location) => {
   }
 };
 /*                       EVENT LISTENERS                                       */
+if (data.results.length === 0) {
+  window.addEventListener("load", comingSoon);
+}
 window.addEventListener("click", saveClick);
 $homePage.addEventListener("click", saveCollections);
 $searchForm.addEventListener("submit", handleSearch);
