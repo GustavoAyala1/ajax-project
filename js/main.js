@@ -126,6 +126,12 @@ const createFoundElement = (results, container) => {
   saveColDiv.appendChild(saveAnchor);
   extraDiv.appendChild(saveColDiv);
 
+  // if (container === $collectionsCont && results.comment !== '""') {
+  //   saveBtn.classList.add("hidden");
+  //   commentForm.classList.remove("hidden");
+  //   textarea.textContent = results.comment;
+  // }
+
   container.appendChild(mainDiv);
 };
 
@@ -143,6 +149,7 @@ const addComment = (event) => {
   event.preventDefault();
   const target = event.target;
   let submitter = event.submitter;
+
   const getForm = target.getAttribute("class");
   const value = target.comments.value;
   if (getForm === "commentForm") {
@@ -151,6 +158,12 @@ const addComment = (event) => {
     let textareaAfter = formParent.children[1];
     const commentReplaced = document.createElement("p");
     if (submitter.getAttribute("class") === "addComment") {
+      if (textareaNear.tagName === "P") {
+        console.log(textareaNear.tagName);
+        textareaNear.remove();
+        textareaAfter.classList.remove("hidden");
+        textareaAfter.textContent = value;
+      }
       commentReplaced.setAttribute("class", "commentReplaced");
       commentReplaced.innerText = `"${value}"`;
       formParent.prepend(commentReplaced);
@@ -161,27 +174,40 @@ const addComment = (event) => {
         target.parentElement.parentElement.children[0].children[0].getAttribute(
           "src"
         );
-      const entryObj = {
-        title: title,
-        description: description,
-        image: imgLink,
-        comment: commentReplaced.innerText,
-      };
-      if (entryObj.description.slice(0, 3) === "(I)") {
-        entryObj.year = +entryObj.description.slice(5, 9);
+      if ($collectionsCont.classList.contains("hidden")) {
+        const entryObj = {
+          title: title,
+          description: description,
+          image: imgLink,
+          comment: commentReplaced.innerText,
+        };
+        if (entryObj.description.slice(0, 3) === "(I)") {
+          entryObj.year = +entryObj.description.slice(5, 9);
+        } else {
+          entryObj.year = +entryObj.description.slice(1, 5);
+        }
+        data.results.push(entryObj);
       } else {
-        entryObj.year = +entryObj.description.slice(1, 5);
+        for (let i = 0; i < data.results.length; i++) {
+          if (title === data.results[i].title) {
+            data.results[i].comment = value;
+          }
+        }
       }
-      data.results.push(entryObj);
     } else if (submitter.getAttribute("class") === "deleteComment") {
       formParent.classList.add("hidden");
       formParent.reset();
       formParent.parentElement.children[2].classList.remove("hidden");
-      textareaNear.remove();
+      if (textareaNear.tagName === "P") {
+        textareaAfter.textContent = "";
+        textareaNear.remove();
+      }
+      textareaNear.classList.remove("hidden");
       textareaAfter.classList.remove("hidden");
     }
   }
 };
+
 /*                       SAVING TO COLLECTIONS                                      */
 
 const saveCollections = (event) => {
