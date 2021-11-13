@@ -5,10 +5,12 @@ const $commentForm = document.querySelector(".commentForm");
 const $collectionsCont = document.querySelector(".collectionsCont");
 const $homePage = document.querySelector(".collections");
 const $sort = document.querySelector(".sort");
+const $forms = document.querySelector(".commentForm");
 
 /*                       HANDLE SEARCH                                      */
 const handleSearch = (event) => {
   event.preventDefault();
+
   const inputValue = $searchForm.searchInput.value;
   $foundCont.classList.remove("hidden");
   $collectionsCont.classList.add("hidden");
@@ -31,8 +33,8 @@ const searchAPI = (search) => {
   xhr.responseType = "json";
   xhr.addEventListener("load", () => {
     const response = xhr.response;
-    console.log(xhr.status);
-    console.log(response);
+    // console.log(xhr.status);
+    // console.log(response);
     removeAllChildNodes($foundCont);
     for (let i = 0; i < response.results.length; i++) {
       createFoundElement(response.results[i], $foundCont);
@@ -60,8 +62,8 @@ const comingSoon = (search) => {
   xhr.responseType = "json";
   xhr.addEventListener("load", () => {
     const response = xhr.response;
-    console.log(xhr.status);
-    console.log(response);
+    // console.log(xhr.status);
+    // console.log(response);
     removeAllChildNodes($foundCont);
     for (let i = 0; i < 20; i++) {
       createFoundElement(response.items[i], $collectionsCont);
@@ -126,11 +128,9 @@ const createFoundElement = (results, container) => {
   saveColDiv.appendChild(saveAnchor);
   extraDiv.appendChild(saveColDiv);
 
-  // if (container === $collectionsCont && results.comment !== '""') {
-  //   saveBtn.classList.add("hidden");
-  //   commentForm.classList.remove("hidden");
-  //   textarea.textContent = results.comment;
-  // }
+  if (container === $collectionsCont) {
+    saveBtn.textContent = "Add Comment";
+  }
 
   container.appendChild(mainDiv);
 };
@@ -159,22 +159,30 @@ const addComment = (event) => {
     const commentReplaced = document.createElement("p");
     if (submitter.getAttribute("class") === "addComment") {
       if (textareaNear.tagName === "P") {
-        console.log(textareaNear.tagName);
         textareaNear.remove();
+        commentReplaced.remove();
+        textareaNear.classList.remove("hidden");
         textareaAfter.classList.remove("hidden");
         textareaAfter.textContent = value;
-      }
-      commentReplaced.setAttribute("class", "commentReplaced");
-      commentReplaced.innerText = `"${value}"`;
-      formParent.prepend(commentReplaced);
-      textareaNear.classList.add("hidden");
-      const title = target.parentElement.children[0].innerText;
-      const description = target.parentElement.children[1].innerText;
-      const imgLink =
-        target.parentElement.parentElement.children[0].children[0].getAttribute(
-          "src"
-        );
-      if ($collectionsCont.classList.contains("hidden")) {
+        for (let i = 0; i < data.results.length; i++) {
+          if (
+            target.parentElement.children[0].innerText === data.results[i].title
+          ) {
+            data.results[i].comment = value;
+          }
+        }
+      } else {
+        commentReplaced.setAttribute("class", "commentReplaced");
+        commentReplaced.innerText = `"${value}"`;
+        formParent.prepend(commentReplaced);
+        textareaNear.classList.add("hidden");
+        const title = target.parentElement.children[0].innerText;
+        const description = target.parentElement.children[1].innerText;
+        const imgLink =
+          target.parentElement.parentElement.children[0].children[0].getAttribute(
+            "src"
+          );
+
         const entryObj = {
           title: title,
           description: description,
@@ -187,14 +195,20 @@ const addComment = (event) => {
           entryObj.year = +entryObj.description.slice(1, 5);
         }
         data.results.push(entryObj);
-      } else {
+      }
+    } else if (submitter.getAttribute("class") === "deleteComment") {
+      if (textareaNear.tagName !== "P") {
+        formParent.parentElement.parentElement.remove();
+
         for (let i = 0; i < data.results.length; i++) {
-          if (title === data.results[i].title) {
-            data.results[i].comment = value;
+          if (
+            formParent.parentElement.firstChild.textContent ===
+            data.results[i].title
+          ) {
+            data.results.splice(i, 1);
           }
         }
       }
-    } else if (submitter.getAttribute("class") === "deleteComment") {
       formParent.classList.add("hidden");
       formParent.reset();
       formParent.parentElement.children[2].classList.remove("hidden");
@@ -278,9 +292,11 @@ const handleSort = (event, location) => {
   }
 };
 /*                       EVENT LISTENERS                                       */
+
 if (data.results.length === 0) {
   window.addEventListener("load", comingSoon);
 }
+
 window.addEventListener("click", saveClick);
 $homePage.addEventListener("click", saveCollections);
 $searchForm.addEventListener("submit", handleSearch);
