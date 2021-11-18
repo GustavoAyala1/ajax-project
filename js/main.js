@@ -84,6 +84,7 @@ const createFoundElement = (results, container) => {
   const saveBtn = document.createElement("button");
   const commentForm = document.createElement("form");
   const textarea = document.createElement("textarea");
+  const commentP = document.createElement("p");
   const extraDiv = document.createElement("div");
   const extraOne = document.createElement("div");
   const deleteAnchor = document.createElement("button");
@@ -101,6 +102,7 @@ const createFoundElement = (results, container) => {
   textarea.setAttribute("class", "comments");
   textarea.setAttribute("id", "comments");
   textarea.setAttribute("placeholder", "Add comments");
+  commentP.setAttribute("class", "commentReplaced");
   extraDiv.setAttribute("class", "row");
   extraOne.setAttribute("class", "halfCol");
   deleteAnchor.setAttribute("class", "deleteComment");
@@ -130,6 +132,13 @@ const createFoundElement = (results, container) => {
 
   if (container === $collectionsCont) {
     saveBtn.textContent = "Add Comment";
+    if (results.comment && results.comment !== '""') {
+      saveBtn.classList.add("hidden");
+      commentForm.classList.remove("hidden");
+      textarea.classList.add("hidden");
+      commentP.textContent = results.comment;
+      commentForm.prepend(commentP);
+    }
   }
 
   container.appendChild(mainDiv);
@@ -139,9 +148,30 @@ const createFoundElement = (results, container) => {
 
 const saveClick = (event) => {
   const target = event.target;
+  const containerElement = event.target.parentElement.parentElement;
   if (target.getAttribute("class") === "saveBtn") {
-    target.classList.add("hidden");
-    target.nextElementSibling.classList.remove("hidden");
+    if ($foundCont.classList.contains("hidden")) {
+      target.classList.add("hidden");
+      target.nextElementSibling.classList.remove("hidden");
+    }
+    if ($collectionsCont.classList.contains("hidden")) {
+      target.classList.add("redSaveBtn");
+      const title = containerElement.children[1].children[0].innerText;
+      const description = containerElement.children[1].children[1].innerText;
+      const imgLink =
+        containerElement.children[0].children[0].getAttribute("src");
+      const entryObj = {
+        title: title,
+        description: description,
+        image: imgLink,
+      };
+      if (entryObj.description.slice(0, 3) === "(I)") {
+        entryObj.year = +entryObj.description.slice(5, 9);
+      } else {
+        entryObj.year = +entryObj.description.slice(1, 5);
+      }
+      data.results.push(entryObj);
+    }
   }
 };
 
@@ -173,7 +203,7 @@ const addComment = (event) => {
         }
       } else {
         commentReplaced.setAttribute("class", "commentReplaced");
-        commentReplaced.innerText = `"${value}"`;
+        commentReplaced.innerText = `${value}`;
         formParent.prepend(commentReplaced);
         textareaNear.classList.add("hidden");
         const title = target.parentElement.children[0].innerText;
@@ -194,7 +224,12 @@ const addComment = (event) => {
         } else {
           entryObj.year = +entryObj.description.slice(1, 5);
         }
-        data.results.push(entryObj);
+        for (let i = 0; i < data.results.length; i++) {
+          if (data.results[i].title === entryObj.title) {
+            data.results.splice(i, 1, entryObj);
+          }
+        }
+        // data.results.push(entryObj);
       }
     } else if (submitter.getAttribute("class") === "deleteComment") {
       if (textareaNear.tagName !== "P") {

@@ -96,6 +96,9 @@ img {
   border-color: rgb(23, 162, 184);
   margin-right: 5px;
 }
+.redSaveBtn {
+  border-color: rgba(255, 0, 0, 0.719);
+}
 
 .comments {
   background-color: rgb(41, 41, 41);
