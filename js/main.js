@@ -5,14 +5,16 @@ const $commentForm = document.querySelector(".commentForm");
 const $collectionsCont = document.querySelector(".collectionsCont");
 const $homePage = document.querySelector(".collections");
 const $sort = document.querySelector(".sort");
+const $forms = document.querySelector(".commentForm");
 
 /*                       HANDLE SEARCH                                      */
 const handleSearch = (event) => {
   event.preventDefault();
+
   const inputValue = $searchForm.searchInput.value;
   $foundCont.classList.remove("hidden");
   $collectionsCont.classList.add("hidden");
-  searchAPI(inputValue);
+  searchAPI(inputValue, $foundCont);
   $searchForm.reset();
 };
 
@@ -27,11 +29,12 @@ const searchAPI = (search) => {
     "GET",
     `https://imdb-api.com/en/API/SearchTitle/k_mfnhal5g/${search}`
   );
+
   xhr.responseType = "json";
   xhr.addEventListener("load", () => {
     const response = xhr.response;
-    console.log(xhr.status);
-    console.log(response);
+    // console.log(xhr.status);
+    // console.log(response);
     removeAllChildNodes($foundCont);
     for (let i = 0; i < response.results.length; i++) {
       createFoundElement(response.results[i], $foundCont);
@@ -46,8 +49,24 @@ const searchAPI = (search) => {
       } else {
         resultsObj.year = +resultsObj.description.slice(1, 5);
       }
-      console.log(searchResults);
+
       searchResults.unshift(resultsObj);
+    }
+  });
+  xhr.send();
+};
+
+const comingSoon = (search) => {
+  xhr.open("GET", `https://imdb-api.com/en/API/MostPopularMovies/k_mfnhal5g`);
+
+  xhr.responseType = "json";
+  xhr.addEventListener("load", () => {
+    const response = xhr.response;
+    // console.log(xhr.status);
+    // console.log(response);
+    removeAllChildNodes($foundCont);
+    for (let i = 0; i < 20; i++) {
+      createFoundElement(response.items[i], $collectionsCont);
     }
   });
   xhr.send();
@@ -65,6 +84,7 @@ const createFoundElement = (results, container) => {
   const saveBtn = document.createElement("button");
   const commentForm = document.createElement("form");
   const textarea = document.createElement("textarea");
+  const commentP = document.createElement("p");
   const extraDiv = document.createElement("div");
   const extraOne = document.createElement("div");
   const deleteAnchor = document.createElement("button");
@@ -82,6 +102,7 @@ const createFoundElement = (results, container) => {
   textarea.setAttribute("class", "comments");
   textarea.setAttribute("id", "comments");
   textarea.setAttribute("placeholder", "Add comments");
+  commentP.setAttribute("class", "commentReplaced");
   extraDiv.setAttribute("class", "row");
   extraOne.setAttribute("class", "halfCol");
   deleteAnchor.setAttribute("class", "deleteComment");
@@ -109,6 +130,17 @@ const createFoundElement = (results, container) => {
   saveColDiv.appendChild(saveAnchor);
   extraDiv.appendChild(saveColDiv);
 
+  if (container === $collectionsCont) {
+    saveBtn.textContent = "Add Comment";
+    if (results.comment && results.comment !== '""') {
+      saveBtn.classList.add("hidden");
+      commentForm.classList.remove("hidden");
+      textarea.classList.add("hidden");
+      commentP.textContent = results.comment;
+      commentForm.prepend(commentP);
+    }
+  }
+
   container.appendChild(mainDiv);
 };
 
@@ -116,9 +148,30 @@ const createFoundElement = (results, container) => {
 
 const saveClick = (event) => {
   const target = event.target;
+  const containerElement = event.target.parentElement.parentElement;
   if (target.getAttribute("class") === "saveBtn") {
-    target.classList.add("hidden");
-    target.nextElementSibling.classList.remove("hidden");
+    if ($foundCont.classList.contains("hidden")) {
+      target.classList.add("hidden");
+      target.nextElementSibling.classList.remove("hidden");
+    }
+    if ($collectionsCont.classList.contains("hidden")) {
+      target.classList.add("redSaveBtn");
+      const title = containerElement.children[1].children[0].innerText;
+      const description = containerElement.children[1].children[1].innerText;
+      const imgLink =
+        containerElement.children[0].children[0].getAttribute("src");
+      const entryObj = {
+        title: title,
+        description: description,
+        image: imgLink,
+      };
+      if (entryObj.description.slice(0, 3) === "(I)") {
+        entryObj.year = +entryObj.description.slice(5, 9);
+      } else {
+        entryObj.year = +entryObj.description.slice(1, 5);
+      }
+      data.results.push(entryObj);
+    }
   }
 };
 
@@ -126,6 +179,7 @@ const addComment = (event) => {
   event.preventDefault();
   const target = event.target;
   let submitter = event.submitter;
+
   const getForm = target.getAttribute("class");
   const value = target.comments.value;
   if (getForm === "commentForm") {
@@ -134,39 +188,82 @@ const addComment = (event) => {
     let textareaAfter = formParent.children[1];
     const commentReplaced = document.createElement("p");
     if (submitter.getAttribute("class") === "addComment") {
-      commentReplaced.setAttribute("class", "commentReplaced");
-      commentReplaced.innerText = `"${value}"`;
-      formParent.prepend(commentReplaced);
-      textareaNear.classList.add("hidden");
-      const title = target.parentElement.children[0].innerText;
-      const description = target.parentElement.children[1].innerText;
-      const imgLink =
-        target.parentElement.parentElement.children[0].children[0].getAttribute(
-          "src"
-        );
-      const entryObj = {
-        title: title,
-        description: description,
-        image: imgLink,
-        comment: commentReplaced.innerText,
-      };
-      if (entryObj.description.slice(0, 3) === "(I)") {
-        entryObj.year = +entryObj.description.slice(5, 9);
+      if (textareaNear.tagName === "P") {
+        textareaNear.remove();
+        commentReplaced.remove();
+        textareaNear.classList.remove("hidden");
+        textareaAfter.classList.remove("hidden");
+        textareaAfter.textContent = value;
+        for (let i = 0; i < data.results.length; i++) {
+          if (
+            target.parentElement.children[0].innerText === data.results[i].title
+          ) {
+            data.results[i].comment = value;
+          }
+        }
       } else {
-        entryObj.year = +entryObj.description.slice(1, 5);
+        commentReplaced.setAttribute("class", "commentReplaced");
+        commentReplaced.innerText = `${value}`;
+        formParent.prepend(commentReplaced);
+        textareaNear.classList.add("hidden");
+        const title = target.parentElement.children[0].innerText;
+        const description = target.parentElement.children[1].innerText;
+        const imgLink =
+          target.parentElement.parentElement.children[0].children[0].getAttribute(
+            "src"
+          );
+
+        const entryObj = {
+          title: title,
+          description: description,
+          image: imgLink,
+          comment: commentReplaced.innerText,
+        };
+        if (entryObj.description.slice(0, 3) === "(I)") {
+          entryObj.year = +entryObj.description.slice(5, 9);
+        } else {
+          entryObj.year = +entryObj.description.slice(1, 5);
+        }
+        for (let i = 0; i < data.results.length; i++) {
+          if (data.results[i].title === entryObj.title) {
+            data.results.splice(i, 1, entryObj);
+          }
+        }
+        // data.results.push(entryObj);
       }
-      data.results.push(entryObj);
     } else if (submitter.getAttribute("class") === "deleteComment") {
+      if (textareaNear.tagName !== "P") {
+        formParent.parentElement.parentElement.remove();
+
+        for (let i = 0; i < data.results.length; i++) {
+          if (
+            formParent.parentElement.firstChild.textContent ===
+            data.results[i].title
+          ) {
+            data.results.splice(i, 1);
+          }
+        }
+      }
       formParent.classList.add("hidden");
       formParent.reset();
       formParent.parentElement.children[2].classList.remove("hidden");
-      textareaNear.remove();
+      if (textareaNear.tagName === "P") {
+        textareaAfter.textContent = "";
+        textareaNear.remove();
+      }
+      textareaNear.classList.remove("hidden");
       textareaAfter.classList.remove("hidden");
     }
   }
 };
+
 /*                       SAVING TO COLLECTIONS                                      */
+
 const saveCollections = (event) => {
+  if (data.results.length === 0) {
+    removeAllChildNodes($collectionsCont);
+    comingSoon();
+  }
   removeAllChildNodes($collectionsCont);
   $foundCont.classList.add("hidden");
   $collectionsCont.classList.remove("hidden");
@@ -180,6 +277,12 @@ if (data.results.length > 0) {
   $collectionsCont.classList.remove("hidden");
   for (let i = 0; i < data.results.length; i++) {
     createFoundElement(data.results[i], $collectionsCont);
+  }
+} else {
+  $foundCont.classList.add("hidden");
+  $collectionsCont.classList.remove("hidden");
+  for (let i = 0; i < data.results.length; i++) {
+    comingSoon("random");
   }
 }
 
@@ -224,6 +327,11 @@ const handleSort = (event, location) => {
   }
 };
 /*                       EVENT LISTENERS                                       */
+
+if (data.results.length === 0) {
+  window.addEventListener("load", comingSoon);
+}
+
 window.addEventListener("click", saveClick);
 $homePage.addEventListener("click", saveCollections);
 $searchForm.addEventListener("submit", handleSearch);
